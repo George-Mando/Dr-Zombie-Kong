@@ -25,7 +25,7 @@
 
 > *Eclipse the ordinary. Build what others can't imagine.*
 
-[![▶ PLAY FEATHERFALL VILLAGE](https://img.shields.io/badge/%E2%96%B6_PLAY_Dr-Zombie-Kong-ff6b2a?style=for-the-badge&logoColor=black&labelColor=000000)](https://george-mando.github.io/Dr-Zombie-Kong/)
+[![▶ Play Dr Zombie Kong](https://img.shields.io/badge/▶_Play-Dr_Zombie_Kong-ff6b2a?style=for-the-badge&logoColor=black&labelColor=000000)](https://george-mando.github.io/Dr-Zombie-Kong/)
 
 **XenClipse Studios · Portfolio · Game Dev Hub**
 
