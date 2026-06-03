@@ -6,139 +6,38 @@
 <title>DR. ZOMBIE KONG</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{
-  width:100%;height:100%;
-  background:#000;
-  overflow:hidden;
-  font-family:'Courier New',monospace;
-  touch-action:none;
-}
-#wrap{
-  position:fixed;inset:0;
-  display:flex;flex-direction:column;
-  align-items:center;
-  background:#000;
-}
-/* Game canvas — takes all space above controls */
-#c{
-  display:block;
-  width:100%;
-  max-width:420px;
-  flex:1;
-  min-height:0;
-  image-rendering:pixelated;
-  image-rendering:crisp-edges;
-  background:#000;
-}
-/* HUD strip */
-#hud{
-  width:100%;max-width:420px;
-  display:flex;justify-content:space-between;
-  padding:3px 10px;
-  background:#0a0a0a;
-  border-top:2px solid #ff4400;
-  border-bottom:1px solid #330a00;
-  flex-shrink:0;
-}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Courier New',monospace;touch-action:none;}
+#wrap{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;background:#000;}
+#c{display:block;width:100%;max-width:420px;flex:1;min-height:0;image-rendering:pixelated;image-rendering:crisp-edges;background:#000;}
+#hud{width:100%;max-width:420px;display:flex;justify-content:space-between;padding:3px 10px;background:#0a0a0a;border-top:2px solid #ff4400;border-bottom:1px solid #330a00;flex-shrink:0;}
 #hud span{font-size:11px;font-weight:bold;}
 #sc{color:#ffcc00;}#lv2{color:#ff6666;}#lv{color:#66ff88;}#hi{color:#ffff44;}
-/* Controls area */
-#ctrl{
-  width:100%;max-width:420px;
-  height:170px;
-  background:#080808;
-  border-top:2px solid #333;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:6px 14px;
-  flex-shrink:0;
-}
-/* D-pad left side */
-#dpad{
-  display:grid;
-  grid-template-columns:60px 60px 60px;
-  grid-template-rows:60px 60px;
-  gap:5px;
-}
-/* Right side buttons */
-#rside{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:6px;
-}
-/* Button base */
-.b{
-  background:#111;
-  border:3px solid #555;
-  color:#ccc;
-  border-radius:14px;
-  cursor:pointer;
-  font-family:'Courier New',monospace;
-  font-weight:900;
-  user-select:none;-webkit-user-select:none;
-  touch-action:none;
-  -webkit-tap-highlight-color:transparent;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  line-height:1.1;
-}
+#ctrl{width:100%;max-width:420px;height:160px;background:#080808;border-top:2px solid #333;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;flex-shrink:0;}
+#dpad{display:grid;grid-template-columns:56px 56px 56px;grid-template-rows:56px 56px;gap:4px;}
+#rside{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.b{background:#111;border:3px solid #555;color:#ccc;border-radius:12px;cursor:pointer;font-family:'Courier New',monospace;font-weight:900;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;}
 .b:active,.b.pr{transform:scale(0.91);}
-/* D-pad buttons */
-.db{width:60px;height:60px;font-size:24px;border-color:#444;}
+.db{width:56px;height:56px;font-size:22px;border-color:#444;}
 .db:active,.db.pr{background:#333;border-color:#888;}
-/* UP/DOWN - yellow tint (ladder) */
 #bup{border-color:#cc9900;color:#ffcc00;background:#120e00;}
 #bup:active,#bup.pr{background:#ffcc00;color:#000;}
 #bdown{border-color:#996600;color:#cc9900;background:#100c00;}
 #bdown:active,#bdown.pr{background:#cc9900;color:#000;}
-/* Blank cell */
-.blank{width:60px;height:60px;}
-/* JUMP — red, big, round */
-#bjump{
-  width:88px;height:88px;
-  font-size:24px;
-  border-color:#ff4400;color:#ff6622;
-  border-radius:50%;border-width:4px;
-  background:#180500;
-}
+.blank{width:56px;height:56px;}
+#bjump{width:84px;height:84px;font-size:22px;border-color:#ff4400;color:#ff6622;border-radius:50%;border-width:4px;background:#180500;}
 #bjump:active,#bjump.pr{background:#ff4400;color:#fff;}
-/* START */
-#bstart{
-  background:#220000;border:2px solid #ff4400;color:#ff6644;
-  border-radius:10px;padding:9px 16px;font-size:12px;font-weight:900;
-  cursor:pointer;font-family:'Courier New',monospace;touch-action:none;
-  user-select:none;width:88px;text-align:center;
-}
+#bstart{background:#220000;border:2px solid #ff4400;color:#ff6644;border-radius:10px;padding:8px 14px;font-size:11px;font-weight:900;cursor:pointer;font-family:'Courier New',monospace;touch-action:none;user-select:none;width:84px;text-align:center;}
 #bstart:active{background:#ff4400;color:#fff;}
-/* Overlay */
-#overlay{
-  position:absolute;
-  top:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:420px;
-  height:calc(100% - 170px - 26px);
-  display:flex;align-items:center;justify-content:center;
-  pointer-events:none;
-  z-index:20;
-}
-#msg{
-  background:rgba(0,0,0,0.88);
-  border:3px solid #ff4400;
-  border-radius:8px;
-  padding:16px 20px;
-  text-align:center;
-  width:85%;
-  max-width:300px;
-}
-#msg h2{font-size:16px;color:#ffcc00;text-shadow:0 0 8px #ff6600;margin-bottom:8px;}
-#msg p{font-size:11px;color:#ffaa66;line-height:1.75;}
+#overlay{position:absolute;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;height:calc(100% - 160px - 26px);display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:20;}
+#msg{background:rgba(0,0,0,0.88);border:3px solid #ff4400;border-radius:8px;padding:14px 18px;text-align:center;width:85%;max-width:300px;}
+#msg h2{font-size:15px;color:#ffcc00;text-shadow:0 0 8px #ff6600;margin-bottom:7px;}
+#msg p{font-size:10px;color:#ffaa66;line-height:1.75;}
 #msg.hidden{display:none;}
 </style>
 </head>
 <body>
 <div id="wrap">
-  <canvas id="c" width="360" height="280"></canvas>
+  <canvas id="c" width="360" height="300"></canvas>
   <div id="hud">
     <span id="sc">SCORE: 0</span>
     <span id="lv2">❤❤❤</span>
@@ -148,10 +47,10 @@ html,body{
   <div id="ctrl">
     <div id="dpad">
       <div class="blank"></div>
-      <button class="b db" id="bup">▲<br><span style="font-size:9px">UP</span></button>
+      <button class="b db" id="bup">▲<br><span style="font-size:8px">UP</span></button>
       <div class="blank"></div>
       <button class="b db" id="bl">◄</button>
-      <button class="b db" id="bdown">▼<br><span style="font-size:9px">DN</span></button>
+      <button class="b db" id="bdown">▼<br><span style="font-size:8px">DN</span></button>
       <button class="b db" id="br">►</button>
     </div>
     <div id="rside">
@@ -164,217 +63,128 @@ html,body{
   <div id="msg">
     <h2>🧟 DR. ZOMBIE KONG</h2>
     <p>Dr. Z kidnapped the Princess! 👸<br><br>
-    ◄ ► Walk left / right<br>
-    ▲ UP + walk onto ladder = climb<br>
+    ◄ ► Walk · ▲ UP on ladder = climb<br>
     ▼ DN = climb down<br>
     JUMP = hop over zombies only!<br>
-    Reach the 👸 Princess to win!</p>
+    Collect 💊 pills · Reach 👸 to win!</p>
   </div>
 </div>
 
 <script>
 'use strict';
-// ═══════════════════════════════════════════════════
-//  DR. ZOMBIE KONG
-//  Visual style: classic arcade Donkey Kong
-//  - Red steel girders / platforms
-//  - Dark background with scan lines
-//  - Proper pixel-art style score display
-//  Jump height deliberately LOW — only clears zombies
-//  Climbing via ladders only
-// ═══════════════════════════════════════════════════
-const C=document.getElementById('c'), X=C.getContext('2d');
+const C=document.getElementById('c'),X=C.getContext('2d');
+const CW=360,CH=300;
+C.width=CW;C.height=CH;
 
-// Canvas internal resolution
-const CW=360, CH=280;
-C.width=CW; C.height=CH;
-
-// Make canvas fill available space while keeping aspect
 function resizeC(){
-  const wrap=document.getElementById('wrap');
-  const ctrlH=170, hudH=26;
+  const ctrlH=160,hudH=26;
   const avail=window.innerHeight-ctrlH-hudH;
   const maxW=Math.min(window.innerWidth,420);
-  const scale=Math.min(maxW/CW, avail/CH);
+  const scale=Math.min(maxW/CW,avail/CH);
   C.style.width=(CW*scale)+'px';
   C.style.height=(CH*scale)+'px';
 }
 resizeC();
 window.addEventListener('resize',resizeC);
 
-// ─────────────────────────────────────────
-//  COLOUR PALETTE  (classic arcade DK look)
-// ─────────────────────────────────────────
-const PAL={
-  bg:'#000000',
-  girder:'#cc4400',    // classic DK red/orange steel
-  girderHi:'#ff6622',  // girder top highlight
-  girderDk:'#882200',  // girder shadow
-  ladder:'#4488ff',    // blue ladders (like classic DK)
-  ladderRung:'#88bbff',
-  rivet:'#ffcc00',     // gold rivets on girders
-  ground:'#cc4400',    // bottom ground girder
-  txtScore:'#ffcc00',
-  txtHi:'#ff4400',
-};
+// ── PHYSICS CONSTANTS ──
+// Floor gap = 28px, zombie height = 14px
+// JUMP_VY=-3.8, gravity=0.45 → peak = 3.8²/(2×0.45) = 16px
+// 16px > 14px (zombie) ✓ CAN hop zombie
+// 16px < 28px (floor gap) ✓ CANNOT reach next floor
+const JUMP_VY = -3.8;
+const GRAVITY = 0.45;
+const FLOOR_GAP = 28;
 
-// ─────────────────────────────────────────
-//  WORLD LAYOUT — 7 floors, 38px gap each
-//  Gap=38px, jump peak=21px → CANNOT reach next floor
-//  Zombie height=18px, jump peak=21px → CAN clear zombie
-// ─────────────────────────────────────────
+// 9 floors, tightly packed
 const GIRDERS=[
-  {y:262, x:4,  w:352, tilt:3},   // 0 bottom  → exits right
-  {y:224, x:4,  w:340, tilt:-3},  // 1         ← exits left
-  {y:186, x:4,  w:352, tilt:3},   // 2         → exits right
-  {y:148, x:4,  w:340, tilt:-3},  // 3         ← exits left
-  {y:110, x:4,  w:352, tilt:3},   // 4         → exits right
-  {y:72,  x:4,  w:340, tilt:-3},  // 5         ← exits left
-  {y:34,  x:4,  w:352, tilt:-3},  // 6 top     ← doctor + princess
+  {y:284,x:4, w:352,tilt: 3}, // 0 bottom →
+  {y:256,x:4, w:340,tilt:-3}, // 1 ←
+  {y:228,x:4, w:352,tilt: 3}, // 2 →
+  {y:200,x:4, w:340,tilt:-3}, // 3 ←
+  {y:172,x:4, w:352,tilt: 3}, // 4 →
+  {y:144,x:4, w:340,tilt:-3}, // 5 ←
+  {y:116,x:4, w:352,tilt: 3}, // 6 →
+  {y:88, x:4, w:340,tilt:-3}, // 7 ←
+  {y:60, x:4, w:352,tilt:-3}, // 8 top (doctor+princess)
 ];
-const GH=10; // girder height
+const GH=8;
 
-// Ladders — one per level gap, alternating sides
+// Ladders alternating sides, one per gap
 const LADDERS=[
-  {cx:70,  y1:GIRDERS[1].y, y2:GIRDERS[0].y+GH, w:14},
-  {cx:280, y1:GIRDERS[2].y, y2:GIRDERS[1].y+GH, w:14},
-  {cx:90,  y1:GIRDERS[3].y, y2:GIRDERS[2].y+GH, w:14},
-  {cx:260, y1:GIRDERS[4].y, y2:GIRDERS[3].y+GH, w:14},
-  {cx:80,  y1:GIRDERS[5].y, y2:GIRDERS[4].y+GH, w:14},
-  {cx:250, y1:GIRDERS[6].y, y2:GIRDERS[5].y+GH, w:14},
+  {cx:65,  y1:GIRDERS[1].y,y2:GIRDERS[0].y+GH,w:12},
+  {cx:275, y1:GIRDERS[2].y,y2:GIRDERS[1].y+GH,w:12},
+  {cx:75,  y1:GIRDERS[3].y,y2:GIRDERS[2].y+GH,w:12},
+  {cx:265, y1:GIRDERS[4].y,y2:GIRDERS[3].y+GH,w:12},
+  {cx:70,  y1:GIRDERS[5].y,y2:GIRDERS[4].y+GH,w:12},
+  {cx:270, y1:GIRDERS[6].y,y2:GIRDERS[5].y+GH,w:12},
+  {cx:68,  y1:GIRDERS[7].y,y2:GIRDERS[6].y+GH,w:12},
+  {cx:268, y1:GIRDERS[8].y,y2:GIRDERS[7].y+GH,w:12},
 ];
 
-// ─────────────────────────────────────────
-//  GAME STATE
-// ─────────────────────────────────────────
-let state='menu', score=0, hiScore=0, lives=3, stage=1, frame=0;
+let state='menu',score=0,hiScore=0,lives=3,stage=1,frame=0;
 
-// ─────────────────────────────────────────
-//  PLAYER
-//  jumpPower is intentionally small — only clears zombie height
-//  The gap between platforms is ~48px, zombie height is 28px
-//  So max jump = 32px upward — enough to hop zombie but NOT reach next floor
-// ─────────────────────────────────────────
-// Jump physics (exact):
-// vy=-4.6, gravity=0.5 → peak = vy²/(2g) = 21.2px
-// Zombie height = 18px → clears with 3px spare ✓
-// Floor gap = 38px   → 21px peak cannot reach next floor ✓
-const JUMP_VY=-4.6;
-const GRAVITY=0.5;
+const DOC={x:0,y:0,w:28,h:40,throwTimer:0,throwInterval:140,animF:0,laughTimer:0};
+const PRINCESS={x:0,y:0,w:18,h:30,animF:0};
 
 const PL={
-  x:20, y:0,
-  w:18, h:24,
-  vx:0, vy:0,
-  onGround:false,
-  climbing:false,
-  climbLad:null,
-  dir:1,
-  walkF:0,
-  invincible:0,
-  dead:false, deathTimer:0
+  x:20,y:0,w:14,h:20,
+  vx:0,vy:0,
+  onGround:false,climbing:false,climbLad:null,
+  dir:1,walkF:0,invincible:0,dead:false,deathTimer:0
 };
 
-// ─────────────────────────────────────────
-//  DOCTOR + PRINCESS
-// ─────────────────────────────────────────
-const DOC={x:0,y:0,w:32,h:48,throwTimer:0,throwInterval:150,animF:0,laughTimer:0};
-const PRINCESS={x:0,y:0,w:22,h:36,animF:0};
+let zombies=[],pills=[],fires=[],particles=[],pops=[];
 
-// ─────────────────────────────────────────
-//  ZOMBIES  (barrels)
-//  Walk down each girder in the tilt direction,
-//  fall off the low end, land on the next girder
-// ─────────────────────────────────────────
-let zombies=[];
-
-// ─────────────────────────────────────────
-//  PILLS + FIRES + FX
-// ─────────────────────────────────────────
-let pills=[], fires=[], particles=[], pops=[];
-
-// ─────────────────────────────────────────
-//  RIVETS on girders (DK aesthetic)
-// ─────────────────────────────────────────
-function getRivets(g){
-  const rv=[];
-  for(let rx=g.x+14;rx<g.x+g.w-10;rx+=22){
-    rv.push({x:rx,y:g.y+GH/2});
-  }
-  return rv;
-}
-
-// ─────────────────────────────────────────
-//  INIT STAGE
-// ─────────────────────────────────────────
 function initStage(s){
   zombies=[];pills=[];fires=[];particles=[];pops=[];
   frame=0;
-  DOC.throwInterval=Math.max(55,160-s*18);
+  DOC.throwInterval=Math.max(50,145-s*16);
   DOC.throwTimer=Math.floor(DOC.throwInterval*0.6);
   DOC.laughTimer=0;
-  // Doctor on top girder, right side
+
   const topG=GIRDERS[GIRDERS.length-1];
-  DOC.x=topG.x+topG.w-56;
+  DOC.x=topG.x+topG.w-50;
   DOC.y=topG.y-DOC.h;
-  // Princess on top girder, left side (chained)
-  PRINCESS.x=topG.x+12;
+  PRINCESS.x=topG.x+10;
   PRINCESS.y=topG.y-PRINCESS.h;
 
-  // Pills on girders 1-5 (all middle floors)
-  [{g:1,ox:55},{g:1,ox:170},{g:1,ox:280},
-   {g:2,ox:70},{g:2,ox:180},{g:2,ox:280},
-   {g:3,ox:60},{g:3,ox:180},
-   {g:4,ox:80},{g:4,ox:220},
-   {g:5,ox:70},{g:5,ox:200}
-  ].forEach(({g,ox})=>{
-    pills.push({x:GIRDERS[g].x+ox, y:GIRDERS[g].y-13, w:12,h:12, collected:false});
+  const pillSlots=[
+    {g:1,ox:50},{g:1,ox:160},{g:1,ox:270},
+    {g:2,ox:60},{g:2,ox:180},{g:2,ox:290},
+    {g:3,ox:55},{g:3,ox:175},
+    {g:4,ox:65},{g:4,ox:200},{g:4,ox:300},
+    {g:5,ox:55},{g:5,ox:190},
+    {g:6,ox:70},{g:6,ox:220},
+    {g:7,ox:60},{g:7,ox:210},
+  ];
+  pillSlots.forEach(({g,ox})=>{
+    pills.push({x:GIRDERS[g].x+ox,y:GIRDERS[g].y-11,w:10,h:10,collected:false});
   });
 
-  // Fires: stage 2+ only, bottom floor
   if(s>=2){
-    const n=Math.min(s-1,3);
-    for(let i=0;i<n;i++){
-      fires.push({x:GIRDERS[0].x+120+i*65, y:GIRDERS[0].y-20, animF:i*7});
-    }
+    const n=Math.min(s-1,4);
+    for(let i=0;i<n;i++) fires.push({x:GIRDERS[0].x+100+i*55,y:GIRDERS[0].y-18,animF:i*6});
   }
 
-  // Player starts bottom-left
-  PL.x=GIRDERS[0].x+16;
+  PL.x=GIRDERS[0].x+14;
   PL.y=GIRDERS[0].y-PL.h;
-  PL.vx=0;PL.vy=0;
-  PL.onGround=true;PL.climbing=false;PL.climbLad=null;
-  PL.dead=false;PL.deathTimer=0;
-  PL.invincible=90;PL.dir=1;PL.walkF=0;
+  PL.vx=0;PL.vy=0;PL.onGround=true;PL.climbing=false;PL.climbLad=null;
+  PL.dead=false;PL.deathTimer=0;PL.invincible=90;PL.dir=1;PL.walkF=0;
 }
 
-// ─────────────────────────────────────────
-//  ZOMBIE SPAWN + PHYSICS
-//  Zombie logic:
-//  1. Walk across girder in the tilt direction
-//  2. When it reaches the LOW end (based on tilt), drop off
-//  3. Fall under gravity until hitting the next girder below
-//  4. Repeat until off girder 0 → despawn
-// ─────────────────────────────────────────
 function spawnZombie(){
-  const spd=0.75+(stage-1)*0.22+Math.random()*0.25;
+  const spd=0.7+(stage-1)*0.2+Math.random()*0.2;
   const topG=GIRDERS[GIRDERS.length-1];
   zombies.push({
-    x: DOC.x-20,
-    y: topG.y-18,
-    w:14,h:18,
-    spd,
-    dir:-1,
-    gIdx:GIRDERS.length-1,
-    falling:false,
-    vy:0,
-    animF:0,
-    dead:false,deathTimer:0,
-    scored:false,
-    charging:false
+    x:DOC.x-16,y:topG.y-14,
+    w:11,h:14,
+    spd,dir:-1,gIdx:GIRDERS.length-1,
+    falling:false,vy:0,animF:0,
+    dead:false,deathTimer:0,scored:false,charging:false
   });
-  DOC.laughTimer=65;
-  spawnFX(DOC.x+DOC.w/2, DOC.y+DOC.h, '#22ff44', 5, -1.5);
+  DOC.laughTimer=55;
+  spawnFX(DOC.x+DOC.w/2,DOC.y+DOC.h,'#22ff44',4,-1.2);
 }
 
 function updateZombies(){
@@ -382,121 +192,66 @@ function updateZombies(){
     if(z.dead){z.deathTimer--;return z.deathTimer>0;}
     z.animF++;
 
-    // ── PLAYER PROXIMITY SPEED BOOST ──
-    // When player is on the SAME girder and within 120px, zombie charges faster
-    // When player is on a different girder, zombie maintains normal pace
-    const playerOnSameGirder = !PL.dead && !PL.climbing &&
-      PL.y+PL.h >= GIRDERS[z.gIdx].y-4 && PL.y+PL.h <= GIRDERS[z.gIdx].y+16;
-    const distToPlayer = Math.abs((PL.x+PL.w/2)-(z.x+z.w/2));
-    const sameGirderClose = playerOnSameGirder && distToPlayer < 140;
-    const effectiveSpd = sameGirderClose
-      ? z.spd * (1.8 + Math.min(1.0, (140-distToPlayer)/140))  // charge! up to 2.8x speed
-      : z.spd;
-
-    // Flash red when charging
-    z.charging = sameGirderClose;
+    const playerOnSameGirder=!PL.dead&&!PL.climbing&&
+      PL.y+PL.h>=GIRDERS[z.gIdx].y-4&&PL.y+PL.h<=GIRDERS[z.gIdx].y+14;
+    const distToPlayer=Math.abs((PL.x+PL.w/2)-(z.x+z.w/2));
+    const close=playerOnSameGirder&&distToPlayer<130;
+    const effectiveSpd=close?z.spd*(1.7+Math.min(0.9,(130-distToPlayer)/130)):z.spd;
+    z.charging=close;
 
     if(z.falling){
-      // Gravity — use strong downward pull so zombie snaps to next girder quickly
-      z.vy = Math.min(z.vy + 0.8, 8);
-      z.y += z.vy;
-      // Horizontal drift while falling — keep moving in same direction slowly
-      z.x += z.dir * z.spd * 0.3;
-
-      // ── LAND ON ANY GIRDER BELOW (check all, not just gIdx-1) ──
-      // This prevents skipping platforms when falling fast
+      z.vy=Math.min(z.vy+0.7,7);
+      z.y+=z.vy;
+      z.x+=z.dir*z.spd*0.25;
       let landed=false;
       for(let ni=z.gIdx-1;ni>=0;ni--){
         const ng=GIRDERS[ni];
-        // Zombie must be horizontally on the girder to land
-        const onGirderX = z.x+z.w > ng.x+4 && z.x < ng.x+ng.w-4;
-        if(onGirderX && z.y+z.h >= ng.y && z.y+z.h <= ng.y+z.vy+2){
-          // Land here
-          z.y = ng.y - z.h;
-          z.gIdx = ni;
-          z.falling = false;
-          z.vy = 0;
-          // Walk downhill on new girder
-          if(ng.tilt>0)       z.dir=1;
-          else if(ng.tilt<0)  z.dir=-1;
-          // tilt=0 (flat): keep existing direction
-          landed=true;
-          break;
+        if(z.x+z.w>ng.x+4&&z.x<ng.x+ng.w-4){
+          if(z.y+z.h>=ng.y&&z.y+z.h<=ng.y+z.vy+2){
+            z.y=ng.y-z.h;z.gIdx=ni;z.falling=false;z.vy=0;
+            if(ng.tilt>0)z.dir=1;else if(ng.tilt<0)z.dir=-1;
+            landed=true;break;
+          }
         }
       }
-      if(!landed && z.y > CH+20) return false;
+      if(!landed&&z.y>CH+20)return false;
       return true;
     }
 
-    // ── WALKING ON GIRDER ──
     const g=GIRDERS[z.gIdx];
     z.y=g.y-z.h;
     z.x+=z.dir*effectiveSpd;
 
-    const lEdge=g.x+2;
-    const rEdge=g.x+g.w-z.w-2;
-
-    if(z.dir<0 && z.x<=lEdge){
+    const lEdge=g.x+2,rEdge=g.x+g.w-z.w-2;
+    if(z.dir<0&&z.x<=lEdge){
       z.x=lEdge;
-      if(g.tilt<=0){
-        // Left is the low end (or flat) → roll off
-        z.falling=true; z.vy=1.5;
-      } else {
-        z.dir=1; // left is high end → bounce
-      }
-    } else if(z.dir>0 && z.x>=rEdge){
+      if(g.tilt<=0){z.falling=true;z.vy=1.2;}else z.dir=1;
+    } else if(z.dir>0&&z.x>=rEdge){
       z.x=rEdge;
-      if(g.tilt>=0){
-        // Right is low end (or flat) → roll off
-        z.falling=true; z.vy=1.5;
-      } else {
-        z.dir=-1;
-      }
+      if(g.tilt>=0){z.falling=true;z.vy=1.2;}else z.dir=-1;
     }
+    if(z.y>CH+40)return false;
 
-    // Girder 0: rolled off either end → despawn
-    if(z.gIdx===0 && z.falling) {
-      // Give a moment to fall off screen
-    }
-    if(z.y > CH+40) return false;
-
-    // ── SCORE: player jumped over this zombie ──
     if(!z.scored&&!PL.dead&&PL.vy<-0.1){
-      const pcx=PL.x+PL.w/2, zcx=z.x+z.w/2;
-      if(Math.abs(pcx-zcx)<26 && PL.y+PL.h <= z.y+4 && !PL.climbing){
-        z.scored=true;
-        score+=150;
-        addPop(zcx, z.y-10, '+150', '#ffcc00');
-        updateHUD();
+      const pcx=PL.x+PL.w/2,zcx=z.x+z.w/2;
+      if(Math.abs(pcx-zcx)<22&&PL.y+PL.h<=z.y+4&&!PL.climbing){
+        z.scored=true;score+=150;addPop(zcx,z.y-8,'+150','#ffcc00');updateHUD();
       }
     }
 
-    // ── HURT PLAYER on contact ──
     if(!PL.dead&&PL.invincible<=0){
-      if(overlap(PL,{x:z.x+3,y:z.y+4,w:z.w-6,h:z.h-8})){
-        hurtPlayer();
-      }
+      if(overlap(PL,{x:z.x+2,y:z.y+3,w:z.w-4,h:z.h-5}))hurtPlayer();
     }
     return true;
   });
 }
 
-// ─────────────────────────────────────────
-//  PLAYER UPDATE
-// ─────────────────────────────────────────
 let keys={};
 let tLeft=false,tRight=false,tUp=false,tDown=false;
 
-// JUMP: limited height, only useful for hopping over zombies
-// Platform gap ≈ 48px, zombie height ≈ 28px
-// At vy=-5.2, gravity=0.5 → peak = vy²/(2g) ≈ 27px  ✓ clears zombie, ✗ can't reach platform
 function doJump(){
   if(PL.dead||PL.climbing)return;
-  if(PL.onGround){
-    PL.vy=JUMP_VY;
-    PL.onGround=false;
-    spawnFX(PL.x+PL.w/2,PL.y+PL.h,'#4488ff',3,-0.8);
-  }
+  if(PL.onGround){PL.vy=JUMP_VY;PL.onGround=false;spawnFX(PL.x+PL.w/2,PL.y+PL.h,'#4488ff',2,-0.6);}
 }
 
 function updatePlayer(){
@@ -504,623 +259,414 @@ function updatePlayer(){
     PL.deathTimer--;
     if(PL.deathTimer<=0){
       lives--;updateHUD();
-      if(lives<=0){
-        state='gameover';
-        showOverlay('💀 GAME OVER 💀','Score: '+score+'<br>The outbreak won!<br><br>Press START to try again');
-      } else {
-        initStage(stage);state='playing';hideOverlay();
-      }
+      if(lives<=0){state='gameover';showOverlay('💀 GAME OVER 💀','Score: '+score+'<br>The outbreak won!<br><br>Press START to try again');}
+      else{initStage(stage);state='playing';hideOverlay();}
     }
     return;
   }
   if(PL.invincible>0)PL.invincible--;
 
-  const goL = keys['ArrowLeft'] ||keys['a']||tLeft;
-  const goR = keys['ArrowRight']||keys['d']||tRight;
-  const goU = keys['ArrowUp']   ||keys['w']||tUp;
-  const goD = keys['ArrowDown'] ||keys['s']||tDown;
+  const goL=keys['ArrowLeft']||keys['a']||tLeft;
+  const goR=keys['ArrowRight']||keys['d']||tRight;
+  const goU=keys['ArrowUp']||keys['w']||tUp;
+  const goD=keys['ArrowDown']||keys['s']||tDown;
 
-  // ── ON LADDER ──
   if(PL.climbing){
     PL.vx=0;
-    PL.vy = goU?-2.2:goD?2.2:0;
+    PL.vy=goU?-2.0:goD?2.0:0;
     PL.y+=PL.vy;
-    PL.x=PL.climbLad.cx-PL.w/2; // lock to ladder centre
-
-    // Arrive at top girder
+    PL.x=PL.climbLad.cx-PL.w/2;
     if(goU&&PL.y+PL.h<=PL.climbLad.y1+2){
-      PL.y=PL.climbLad.y1-PL.h;
-      PL.climbing=false;PL.climbLad=null;
-      PL.vy=0;PL.onGround=true;
+      PL.y=PL.climbLad.y1-PL.h;PL.climbing=false;PL.climbLad=null;PL.vy=0;PL.onGround=true;
     }
-    // Return to bottom girder
     if(goD&&PL.y+PL.h>=PL.climbLad.y2){
-      PL.y=PL.climbLad.y2-PL.h;
-      PL.climbing=false;PL.climbLad=null;
-      PL.vy=0;PL.onGround=true;
+      PL.y=PL.climbLad.y2-PL.h;PL.climbing=false;PL.climbLad=null;PL.vy=0;PL.onGround=true;
     }
-    // Slid off bottom
-    if(PL.y+PL.h>PL.climbLad.y2+10){
-      PL.climbing=false;PL.climbLad=null;
-    }
-
-    // Pills while climbing
+    if(PL.y+PL.h>PL.climbLad.y2+10){PL.climbing=false;PL.climbLad=null;}
     collectPills();
     return;
   }
 
-  // ── WALKING ──
-  if(goL){PL.vx=-2.4;PL.dir=-1;}
-  else if(goR){PL.vx=2.4;PL.dir=1;}
-  else PL.vx*=0.68;
+  if(goL){PL.vx=-2.2;PL.dir=-1;}
+  else if(goR){PL.vx=2.2;PL.dir=1;}
+  else PL.vx*=0.65;
 
   if(PL.onGround&&Math.abs(PL.vx)>0.2)PL.walkF++;
 
-  // Gravity
-  PL.vy=Math.min(PL.vy+GRAVITY,10);
+  PL.vy=Math.min(PL.vy+GRAVITY,9);
   PL.x+=PL.vx;
   PL.y+=PL.vy;
   PL.onGround=false;
 
-  // ── GIRDER LANDING ──
   for(const g of GIRDERS){
     if(PL.x+PL.w>g.x+2&&PL.x<g.x+g.w-2){
-      if(PL.vy>=0&&PL.y+PL.h>g.y&&PL.y+PL.h<=g.y+16){
-        PL.y=g.y-PL.h;
-        PL.vy=0;PL.onGround=true;
-        break;
+      if(PL.vy>=0&&PL.y+PL.h>g.y&&PL.y+PL.h<=g.y+14){
+        PL.y=g.y-PL.h;PL.vy=0;PL.onGround=true;break;
       }
     }
   }
 
-  // ── GRAB LADDER ──
-  // Only attach when pressing UP and player is aligned with ladder opening
   if(goU){
     for(const lad of LADDERS){
-      const lx=lad.cx-lad.w/2-4;
-      const rx=lad.cx+lad.w/2+4;
+      const lx=lad.cx-lad.w/2-4,rx=lad.cx+lad.w/2+4;
       if(PL.x+PL.w>lx&&PL.x<rx){
-        // Player feet must be near the bottom of this ladder (standing on lower girder)
         const nearBase=Math.abs(PL.y+PL.h-lad.y2)<14;
-        // Or player is mid-way up (grabbed while jumping over it) — NO, DK style only from base
-        if(nearBase){
-          PL.climbing=true;
-          PL.climbLad=lad;
-          PL.vx=0;PL.vy=0;
-          PL.x=lad.cx-PL.w/2;
-          break;
-        }
+        if(nearBase){PL.climbing=true;PL.climbLad=lad;PL.vx=0;PL.vy=0;PL.x=lad.cx-PL.w/2;break;}
       }
     }
   }
 
-  // World bounds
   PL.x=Math.max(0,Math.min(CW-PL.w,PL.x));
   if(PL.y>CH+30){hurtPlayer();return;}
   if(PL.y<0){PL.y=0;PL.vy=Math.abs(PL.vy)*0.2;}
 
   collectPills();
 
-  // Fire collision
   fires.forEach(f=>{
-    if(overlap(PL,{x:f.x-2,y:f.y+8,w:16,h:10}))hurtPlayer();
+    if(overlap(PL,{x:f.x-2,y:f.y+6,w:14,h:10}))hurtPlayer();
   });
 
-  // Win: touch princess
-  if(!PL.dead&&overlap(PL,PRINCESS)){winStage();}
+  if(!PL.dead&&overlap(PL,PRINCESS))winStage();
 }
 
 function collectPills(){
   pills.forEach(p=>{
     if(p.collected)return;
     if(overlap(PL,{x:p.x,y:p.y,w:p.w,h:p.h})){
-      p.collected=true;score+=300;
-      addPop(p.x+6,p.y-4,'💊+300','#ffdd44');
-      spawnFX(p.x+6,p.y,'#ffdd00',7,-1.5);
-      updateHUD();
+      p.collected=true;score+=300;addPop(p.x+5,p.y-4,'💊+300','#ffdd44');
+      spawnFX(p.x+5,p.y,'#ffdd00',6,-1.3);updateHUD();
     }
   });
 }
 
 function hurtPlayer(){
   if(PL.invincible>0||PL.dead)return;
-  PL.dead=true;PL.deathTimer=55;
-  PL.vy=-4;PL.vx=0;
+  PL.dead=true;PL.deathTimer=50;PL.vy=-3.5;PL.vx=0;
   PL.climbing=false;PL.climbLad=null;
-  spawnFX(PL.x+PL.w/2,PL.y+PL.h*.5,'#ff2200',12,-3);
+  spawnFX(PL.x+PL.w/2,PL.y+PL.h*.5,'#ff2200',10,-2.5);
 }
 
 function winStage(){
   score+=1200+stage*500;updateHUD();
-  spawnFX(PRINCESS.x+11,PRINCESS.y,'#ff88cc',18,-3);
-  spawnFX(DOC.x+16,DOC.y,'#ffcc00',14,-4);
-  const next=stage+1;
-  const last=stage>=5;
-  stage=next;
-  state='stageclear';
+  spawnFX(PRINCESS.x+9,PRINCESS.y,'#ff88cc',16,-2.5);
+  const next=stage+1,last=stage>=5;
+  stage=next;state='stageclear';
   showOverlay(
     last?'🎉 YOU WIN! 🎉':'👸 Princess Rescued!',
     last?'The outbreak is cured!<br>Score: '+score+'<br><br>Press START to play again!'
        :'Dr. Z escapes again...<br>Score: '+score+'<br><br>Stage '+next+' starting...'
   );
-  if(!last){
-    setTimeout(()=>{
-      initStage(stage);state='playing';hideOverlay();
-    },2600);
-  } else {
-    state='win';
-  }
+  if(!last)setTimeout(()=>{initStage(stage);state='playing';hideOverlay();},2400);
+  else state='win';
 }
 
-// ─────────────────────────────────────────
-//  DRAW — CLASSIC DK VISUAL STYLE
-// ─────────────────────────────────────────
+// ─── DRAW ───
 
-// ── BACKGROUND ──
 function drawBG(){
   X.fillStyle='#000';X.fillRect(0,0,CW,CH);
-  // Subtle dark scanlines (CRT effect)
-  X.fillStyle='rgba(0,0,0,0.25)';
+  X.fillStyle='rgba(0,0,0,0.22)';
   for(let sy=0;sy<CH;sy+=2)X.fillRect(0,sy,CW,1);
-  // Stage number watermark
-  X.fillStyle='rgba(80,20,0,0.2)';
-  X.font='bold 80px monospace';X.textAlign='center';
-  X.fillText(stage,CW/2,CH*.65);
-  X.textAlign='left';
+  X.fillStyle='rgba(80,20,0,0.18)';
+  X.font='bold 70px monospace';X.textAlign='center';
+  X.fillText(stage,CW/2,CH*.6);X.textAlign='left';
 }
 
-// ── GIRDERS (classic red steel DK look) ──
 function drawGirders(){
-  GIRDERS.forEach((g,i)=>{
-    const lean=g.tilt;
-    // Shadow beneath
-    X.fillStyle='rgba(0,0,0,0.5)';
-    X.fillRect(g.x+3,g.y+GH+2,g.w,5);
-
-    // Main girder body
-    X.fillStyle=PAL.girder;
-    X.fillRect(g.x,g.y,g.w,GH);
-
-    // Top highlight stripe
-    X.fillStyle=PAL.girderHi;
-    X.fillRect(g.x,g.y,g.w,3);
-
-    // Bottom dark stripe
-    X.fillStyle=PAL.girderDk;
-    X.fillRect(g.x,g.y+GH-3,g.w,3);
-
-    // Slight tilt fill (triangular shadow at high end)
-    if(lean!==0){
-      X.fillStyle=PAL.girderDk;
-      const tw=Math.abs(lean)*8;
-      if(lean>0){
-        // Right is lower, left is higher — shadow on left
-        X.beginPath();X.moveTo(g.x,g.y);X.lineTo(g.x+tw,g.y);X.lineTo(g.x,g.y+GH);X.closePath();X.fill();
-      } else {
-        // Left is lower, right is higher — shadow on right
-        X.beginPath();X.moveTo(g.x+g.w,g.y);X.lineTo(g.x+g.w-tw,g.y);X.lineTo(g.x+g.w,g.y+GH);X.closePath();X.fill();
-      }
+  GIRDERS.forEach(g=>{
+    X.fillStyle='rgba(0,0,0,0.4)';X.fillRect(g.x+2,g.y+GH+2,g.w,4);
+    X.fillStyle='#cc4400';X.fillRect(g.x,g.y,g.w,GH);
+    X.fillStyle='#ff6622';X.fillRect(g.x,g.y,g.w,2);
+    X.fillStyle='#882200';X.fillRect(g.x,g.y+GH-2,g.w,2);
+    X.fillStyle='#ffcc00';
+    for(let rx=g.x+8;rx<g.x+g.w-5;rx+=18){
+      X.beginPath();X.arc(rx,g.y+GH/2,2,0,Math.PI*2);X.fill();
     }
-
-    // Rivets — gold dots along girder (iconic DK look)
-    X.fillStyle=PAL.rivet;
-    for(let rx=g.x+10;rx<g.x+g.w-6;rx+=20){
-      X.beginPath();X.arc(rx,g.y+GH/2,2.5,0,Math.PI*2);X.fill();
-      // Rivet shine
-      X.fillStyle='rgba(255,255,200,0.5)';
-      X.beginPath();X.arc(rx-1,g.y+GH/2-1,1,0,Math.PI*2);X.fill();
-      X.fillStyle=PAL.rivet;
-    }
-
-    // Arrow showing tilt direction (helps player understand flow)
-    if(lean!==0){
-      X.fillStyle='rgba(255,200,100,0.55)';
-      X.font='8px monospace';X.textAlign='center';
-      X.fillText(lean>0?'→→':'←←',g.x+g.w/2,g.y-3);
-      X.textAlign='left';
+    if(g.tilt!==0){
+      X.fillStyle='rgba(255,200,80,0.5)';X.font='7px monospace';X.textAlign='center';
+      X.fillText(g.tilt>0?'→→':'←←',g.x+g.w/2,g.y-2);X.textAlign='left';
     }
   });
-
-  // Ground floor (thick bottom girder)
-  X.fillStyle=PAL.girderDk;
-  X.fillRect(0,CH-8,CW,8);
-  X.fillStyle=PAL.girder;
-  X.fillRect(0,CH-8,CW,3);
+  X.fillStyle='#882200';X.fillRect(0,CH-6,CW,6);
+  X.fillStyle='#cc4400';X.fillRect(0,CH-6,CW,2);
 }
 
-// ── LADDERS (classic blue DK look) ──
 function drawLadders(){
   LADDERS.forEach(l=>{
-    const lx=l.cx-l.w/2;
-    const h=l.y2-l.y1;
-
-    // Background behind ladder (punch hole through girder)
-    X.fillStyle='#111';
-    X.fillRect(lx-2,l.y1,l.w+4,h);
-
-    // Rails
-    X.fillStyle=PAL.ladder;
-    X.fillRect(lx,l.y1,3,h);
-    X.fillRect(lx+l.w-3,l.y1,3,h);
-
-    // Rungs
-    X.fillStyle=PAL.ladderRung;
-    for(let ry=l.y1+5;ry<l.y2;ry+=8){
-      X.fillRect(lx+2,ry,l.w-4,3);
-    }
-
-    // Top and bottom end caps
-    X.fillStyle=PAL.ladderRung;
-    X.fillRect(lx-2,l.y1,l.w+4,3);
-    X.fillRect(lx-2,l.y2-3,l.w+4,3);
+    const lx=l.cx-l.w/2,h=l.y2-l.y1;
+    X.fillStyle='#111';X.fillRect(lx-2,l.y1,l.w+4,h);
+    X.fillStyle='#4488ff';X.fillRect(lx,l.y1,2,h);X.fillRect(lx+l.w-2,l.y1,2,h);
+    X.fillStyle='#88bbff';
+    for(let ry=l.y1+4;ry<l.y2;ry+=7)X.fillRect(lx+1,ry,l.w-2,2);
+    X.fillStyle='#88bbff';
+    X.fillRect(lx-2,l.y1,l.w+4,2);X.fillRect(lx-2,l.y2-2,l.w+4,2);
   });
 }
 
-// ── FIRES ──
 function drawFires(){
   fires.forEach(f=>{
     f.animF++;
-    const fl=Math.sin(f.animF*.22)*2;
-    X.fillStyle='#331100';X.fillRect(f.x-4,f.y+14,18,6);
-    [[18,14,'#ff4400'],[12,10,'#ff8800'],[6,6,'#ffee00']].forEach(([fw,fh,fc])=>{
-      X.fillStyle=fc;
-      X.beginPath();X.moveTo(f.x,f.y-fh*.5+fl);X.lineTo(f.x+fw*.5,f.y+6);X.lineTo(f.x-fw*.5,f.y+6);X.closePath();X.fill();
+    const fl=Math.sin(f.animF*.22)*1.5;
+    X.fillStyle='#331100';X.fillRect(f.x-3,f.y+12,14,5);
+    [[14,12,'#ff4400'],[10,8,'#ff8800'],[5,5,'#ffee00']].forEach(([fw,fh,fc])=>{
+      X.fillStyle=fc;X.beginPath();
+      X.moveTo(f.x,f.y-fh*.5+fl);X.lineTo(f.x+fw*.5,f.y+5);X.lineTo(f.x-fw*.5,f.y+5);
+      X.closePath();X.fill();
     });
-    X.fillStyle='rgba(255,80,0,0.12)';X.beginPath();X.arc(f.x+4,f.y+2,18,0,Math.PI*2);X.fill();
   });
 }
 
-// ── PILLS ──
 function drawPills(){
   pills.forEach(p=>{
     if(p.collected)return;
-    const bob=Math.sin(frame*.08+p.x*.04)*1.5;
-    X.fillStyle='#fff';X.beginPath();X.ellipse(p.x+6,p.y+5+bob,6,4,0,0,Math.PI*2);X.fill();
-    X.fillStyle='#ff2222';X.beginPath();X.ellipse(p.x+6,p.y+5+bob,6,4,0,0,Math.PI);X.fill();
-    X.strokeStyle='#888';X.lineWidth=1;X.beginPath();X.moveTo(p.x,p.y+5+bob);X.lineTo(p.x+12,p.y+5+bob);X.stroke();
-    X.fillStyle='rgba(255,220,50,0.2)';X.beginPath();X.arc(p.x+6,p.y+5+bob,8,0,Math.PI*2);X.fill();
+    const bob=Math.sin(frame*.08+p.x*.04)*1.2;
+    X.fillStyle='#fff';X.beginPath();X.ellipse(p.x+5,p.y+4+bob,5,3,0,0,Math.PI*2);X.fill();
+    X.fillStyle='#ff2222';X.beginPath();X.ellipse(p.x+5,p.y+4+bob,5,3,0,0,Math.PI);X.fill();
+    X.strokeStyle='#888';X.lineWidth=0.8;
+    X.beginPath();X.moveTo(p.x,p.y+4+bob);X.lineTo(p.x+10,p.y+4+bob);X.stroke();
   });
 }
 
-// ── PRINCESS ──
 function drawPrincess(){
   const d=PRINCESS;d.animF++;
-  const bob=Math.sin(d.animF*.06)*1.5;
+  const bob=Math.sin(d.animF*.06)*1.2;
   X.save();X.translate(d.x,d.y+bob);
-  const p=0,q=0;
-  // Sparkle aura
-  X.fillStyle='rgba(255,150,200,0.2)';
-  for(let i=0;i<4;i++){
-    const a=i*.785+d.animF*.04;
-    X.beginPath();X.arc(11+Math.cos(a)*16,18+Math.sin(a)*12,3,0,Math.PI*2);X.fill();
-  }
-  // Dress
   X.fillStyle='#ee44aa';
-  X.beginPath();X.moveTo(p+3,q+16);X.lineTo(p+19,q+16);X.lineTo(p+22,q+36);X.lineTo(p,q+36);X.closePath();X.fill();
-  X.strokeStyle='#cc2288';X.lineWidth=1.5;X.stroke();
-  X.fillStyle='rgba(255,180,220,0.35)';X.fillRect(p+4,q+18,6,10);
-  // Body
-  X.fillStyle='#ffccaa';X.fillRect(p+5,q+8,12,10);
-  // Arms (chained)
-  X.fillStyle='#ffccaa';X.fillRect(p+0,q+10,6,7);X.fillRect(p+16,q+10,6,7);
-  X.strokeStyle='#888';X.lineWidth=2;
-  X.beginPath();X.arc(p+2,q+16,3,0,Math.PI*2);X.stroke();
-  X.beginPath();X.arc(p+20,q+16,3,0,Math.PI*2);X.stroke();
-  // Chain link to wall
-  X.strokeStyle='#666';X.lineWidth=1.5;
-  X.beginPath();X.moveTo(p-6,q+15);X.lineTo(p+2,q+16);X.stroke();
-  // Head
-  X.fillStyle='#ffccaa';X.fillRect(p+4,q,14,10);
-  // Crown
-  X.fillStyle='#ffcc00';X.fillRect(p+3,q-2,16,4);
-  [[p+4,q-6],[p+9,q-9],[p+14,q-6]].forEach(([cx,cy])=>{
-    X.beginPath();X.moveTo(cx,cy+6);X.lineTo(cx+3,cy);X.lineTo(cx+6,cy+6);X.fill();
+  X.beginPath();X.moveTo(2,13);X.lineTo(16,13);X.lineTo(18,30);X.lineTo(0,30);X.closePath();X.fill();
+  X.fillStyle='rgba(255,180,220,0.3)';X.fillRect(3,15,5,8);
+  X.fillStyle='#ffccaa';X.fillRect(4,7,10,8);
+  X.fillStyle='#ffccaa';X.fillRect(-1,8,5,6);X.fillRect(14,8,5,6);
+  X.strokeStyle='#888';X.lineWidth=1.5;
+  X.beginPath();X.arc(1,13,2.5,0,Math.PI*2);X.stroke();
+  X.beginPath();X.arc(17,13,2.5,0,Math.PI*2);X.stroke();
+  X.fillStyle='#ffccaa';X.fillRect(3,0,12,9);
+  X.fillStyle='#ffcc00';X.fillRect(2,-2,14,3);
+  [[3,-5],[8,-7],[13,-5]].forEach(([cx,cy])=>{
+    X.beginPath();X.moveTo(cx,cy+5);X.lineTo(cx+2,cy);X.lineTo(cx+4,cy+5);X.fill();
   });
-  ['#ff4444','#44aaff','#ff4444'].forEach((c,i)=>{
-    X.fillStyle=c;X.beginPath();X.arc(p+7+i*5,q-1,1.5,0,Math.PI*2);X.fill();
-  });
-  // Eyes
-  X.fillStyle='#fff';X.fillRect(p+6,q+3,4,3);X.fillRect(p+12,q+3,4,3);
-  X.fillStyle='#5588ff';X.beginPath();X.arc(p+8,q+4.5,1.5,0,Math.PI*2);X.fill();
-  X.beginPath();X.arc(p+14,q+4.5,1.5,0,Math.PI*2);X.fill();
-  // Mouth (worried line)
-  X.strokeStyle='#cc6644';X.lineWidth=1.5;
-  X.beginPath();X.moveTo(p+7,q+8);X.lineTo(p+15,q+8);X.stroke();
-  // SAVE ME bubble
-  if(Math.floor(d.animF/35)%2===0){
+  X.fillStyle='#fff';X.fillRect(5,2,3,3);X.fillRect(10,2,3,3);
+  X.fillStyle='#5588ff';X.beginPath();X.arc(6.5,3.5,1.2,0,Math.PI*2);X.fill();
+  X.beginPath();X.arc(11.5,3.5,1.2,0,Math.PI*2);X.fill();
+  if(Math.floor(d.animF/30)%2===0){
     X.fillStyle='rgba(255,255,255,0.9)';
-    X.beginPath();X.roundRect(p-18,q-20,50,14,3);X.fill();
-    X.fillStyle='#cc0044';X.font='bold 8px monospace';X.textAlign='center';
-    X.fillText('SAVE ME!',p+11,q-10);X.textAlign='left';
-    X.fillStyle='rgba(255,255,255,0.9)';
-    X.beginPath();X.moveTo(p+8,q-6);X.lineTo(p+5,q);X.lineTo(p+12,q-6);X.closePath();X.fill();
+    X.beginPath();X.roundRect(-14,-17,42,12,2);X.fill();
+    X.fillStyle='#cc0044';X.font='bold 7px monospace';X.textAlign='center';
+    X.fillText('SAVE ME!',9,-9);X.textAlign='left';
   }
   X.restore();
 }
 
-// ── DOCTOR ──
 function drawDoctor(){
   const d=DOC;d.animF++;
   if(d.laughTimer>0)d.laughTimer--;
   const laugh=d.laughTimer>0;
-  const bob=Math.sin(d.animF*.055)*1.5;
+  const bob=Math.sin(d.animF*.055)*1.2;
   X.save();X.translate(d.x,d.y+bob);
-  const p=0,q=0;
-  // Shadow
-  X.fillStyle='rgba(0,0,0,0.35)';X.beginPath();X.ellipse(p+16,q+d.h+2,13,4,0,0,Math.PI*2);X.fill();
-  // Shoes
-  X.fillStyle='#111';X.fillRect(p+2,q+42,13,5);X.fillRect(p+16,q+42,13,5);
-  // Pants
-  X.fillStyle='#331133';X.fillRect(p+4,q+32,12,12);X.fillRect(p+16,q+32,12,12);
-  // Lab coat
-  X.fillStyle='#ddd';X.fillRect(p+2,q+16,28,18);X.fillStyle='#fff';X.fillRect(p+4,q+18,22,14);
-  X.fillStyle='#aaa';X.fillRect(p+2,q+16,7,10);X.fillRect(p+23,q+16,7,10);
-  X.fillStyle='rgba(180,0,0,0.5)';X.fillRect(p+9,q+22,4,5);X.fillRect(p+19,q+26,3,4); // blood
-  // Belt
-  X.fillStyle='#885500';X.fillRect(p+4,q+30,24,3);X.fillStyle='#ffcc00';X.fillRect(p+13,q+30,6,3);
-  // Arms
-  const aw=laugh?Math.sin(d.animF*.25)*10:6;
-  X.fillStyle='#ddd';
-  X.save();X.translate(p+2,q+20);X.rotate((-0.5+aw*.012)*Math.PI/4);X.fillRect(-3,0,7,16);X.restore();
-  X.save();X.translate(p+30,q+20);X.rotate((0.3-aw*.008)*Math.PI/4);X.fillRect(-3,0,7,15);X.restore();
-  // Syringe
-  X.save();X.translate(p+0,q+15);X.rotate(-1.0);
-  X.fillStyle='#9999ff';X.fillRect(-2,-12,5,12);
-  X.fillStyle='#5555ff';X.fillRect(-3,-14,7,4);
-  X.fillStyle='rgba(0,255,80,0.8)';X.fillRect(-1,-12,3,7);
-  X.fillStyle='#aaa';X.fillRect(-1,-16,3,4);
+  X.fillStyle='#111';X.fillRect(2,36,10,4);X.fillRect(14,36,10,4);
+  X.fillStyle='#331133';X.fillRect(3,26,9,12);X.fillRect(14,26,9,12);
+  X.fillStyle='#fff';X.fillRect(1,13,26,15);
+  X.fillStyle='#aaa';X.fillRect(1,13,5,9);X.fillRect(22,13,5,9);
+  X.fillStyle='rgba(180,0,0,0.4)';X.fillRect(8,18,3,4);
+  X.fillStyle='#885500';X.fillRect(3,25,22,3);X.fillStyle='#ffcc00';X.fillRect(11,25,5,3);
+  X.fillStyle='#ddd';X.fillRect(-4,15,5,12);X.fillRect(27,15,5,12);
+  X.save();X.translate(-2,13);X.rotate(-0.9);
+  X.fillStyle='#9999ff';X.fillRect(-1,-10,4,10);
+  X.fillStyle='rgba(0,255,80,0.8)';X.fillRect(0,-9,2,6);
+  X.fillStyle='#aaa';X.fillRect(0,-12,2,4);
   X.restore();
-  // Head
-  X.fillStyle='#ffccaa';X.fillRect(p+5,q+3,22,16);
-  // Hair
-  X.fillStyle='#eee';X.fillRect(p+4,q,24,8);
-  X.fillStyle='#fff';
-  for(let i=0;i<6;i++){X.beginPath();X.moveTo(p+4+i*4,q+6);X.lineTo(p+6+i*4,q);X.lineTo(p+8+i*4,q+6);X.fill();}
-  // Glasses
-  X.strokeStyle='#222';X.lineWidth=1.5;
-  X.strokeRect(p+6,q+7,8,6);X.strokeRect(p+16,q+7,8,6);
-  X.beginPath();X.moveTo(p+14,q+10);X.lineTo(p+16,q+10);X.stroke();
-  X.beginPath();X.moveTo(p+4,q+10);X.lineTo(p+6,q+10);X.stroke();
-  X.beginPath();X.moveTo(p+24,q+10);X.lineTo(p+26,q+10);X.stroke();
-  // Eyes
+  X.fillStyle='#ffccaa';X.fillRect(4,2,20,13);
+  X.fillStyle='#eee';X.fillRect(3,0,22,6);
+  X.strokeStyle='#222';X.lineWidth=1.2;
+  X.strokeRect(5,5,6,5);X.strokeRect(13,5,6,5);
+  X.beginPath();X.moveTo(11,7.5);X.lineTo(13,7.5);X.stroke();
   X.fillStyle=laugh?'#ff0000':'#cc0000';
-  X.beginPath();X.arc(p+10,q+10,2.5,0,Math.PI*2);X.fill();
-  X.beginPath();X.arc(p+20,q+10,2.5,0,Math.PI*2);X.fill();
-  // Brows
-  X.strokeStyle='#333';X.lineWidth=2.5;X.lineCap='round';
-  X.beginPath();X.moveTo(p+6,q+6);X.lineTo(p+14,q+8);X.stroke();
-  X.beginPath();X.moveTo(p+18,q+8);X.lineTo(p+26,q+6);X.stroke();
-  // Mouth
+  X.beginPath();X.arc(8,7.5,2,0,Math.PI*2);X.fill();
+  X.beginPath();X.arc(16,7.5,2,0,Math.PI*2);X.fill();
+  X.strokeStyle='#333';X.lineWidth=2;
+  X.beginPath();X.moveTo(4,4);X.lineTo(11,6);X.stroke();
+  X.beginPath();X.moveTo(17,6);X.lineTo(24,4);X.stroke();
   if(laugh){
-    X.fillStyle='#550000';X.beginPath();X.arc(p+16,q+17,5,0,Math.PI);X.fill();
-    X.fillStyle='#eee';for(let t=0;t<4;t++)X.fillRect(p+8+t*4,q+15,3,3);
-    X.fillStyle='rgba(255,0,0,0.6)';X.font='bold 8px monospace';X.textAlign='center';
-    X.fillText('HA HA HA!',p+16,q-3);X.textAlign='left';
+    X.fillStyle='#550000';X.beginPath();X.arc(14,14,4,0,Math.PI);X.fill();
+    X.fillStyle='rgba(255,0,0,0.55)';X.font='bold 7px monospace';X.textAlign='center';
+    X.fillText('HA HA!',14,-2);X.textAlign='left';
   } else {
-    X.fillStyle='#550000';X.fillRect(p+8,q+16,16,3);
-    X.fillStyle='#eee';X.fillRect(p+9,q+16,3,2);X.fillRect(p+17,q+16,3,2);
+    X.fillStyle='#550000';X.fillRect(7,13,14,2);
   }
-  // Badge
-  X.fillStyle='rgba(0,0,0,0.7)';X.fillRect(p+5,q+22,22,8);
-  X.fillStyle='#22ff44';X.font='bold 7px monospace';X.textAlign='center';
-  X.fillText('DR. Z',p+16,q+28);X.textAlign='left';
+  X.fillStyle='rgba(0,0,0,0.7)';X.fillRect(4,18,20,7);
+  X.fillStyle='#22ff44';X.font='bold 6px monospace';X.textAlign='center';
+  X.fillText('DR. Z',14,23);X.textAlign='left';
   X.restore();
 }
 
-// ── ZOMBIE ──
 function drawZombie(z){
   if(z.dead&&z.deathTimer>0){
-    X.globalAlpha=z.deathTimer/30;
-    X.fillStyle='#22ff44';X.font='14px serif';X.textAlign='center';
-    X.fillText('💀',z.x+10,z.y-z.deathTimer*.4);
+    X.globalAlpha=z.deathTimer/25;
+    X.fillStyle='#22ff44';X.font='11px serif';X.textAlign='center';
+    X.fillText('💀',z.x+6,z.y-z.deathTimer*.35);
     X.globalAlpha=1;X.textAlign='left';return;
   }
   if(z.dead)return;
 
-  // Charging glow (red aura when chasing player)
   if(z.charging){
-    const glow=0.3+Math.sin(frame*.3)*0.15;
+    const glow=0.25+Math.sin(frame*.35)*0.1;
     X.fillStyle='rgba(255,50,0,'+glow+')';
-    X.beginPath();X.ellipse(z.x+10,z.y+z.h/2,z.w*0.9,z.h*0.7,0,0,Math.PI*2);X.fill();
-    // Warning exclamation
-    X.fillStyle='#ff4400';X.font='bold 10px monospace';X.textAlign='center';
-    X.fillText('!!',z.x+10,z.y-4);X.textAlign='left';
+    X.beginPath();X.ellipse(z.x+5.5,z.y+z.h/2,z.w*0.9,z.h*0.7,0,0,Math.PI*2);X.fill();
   }
 
   X.save();
-  if(z.dir>0){X.translate(z.x+z.w,z.y);X.scale(-1,1);}
-  else X.translate(z.x,z.y);
-  const wk=Math.sin(z.animF*(z.charging?0.38:0.22))*3;
-  // Shadow
-  X.fillStyle='rgba(0,50,0,0.4)';X.beginPath();X.ellipse(10,z.h+1,8,2.5,0,0,Math.PI*2);X.fill();
+  if(z.dir>0){X.translate(z.x+z.w,z.y);X.scale(-1,1);}else X.translate(z.x,z.y);
+
+  const wk=Math.sin(z.animF*(z.charging?0.42:0.25))*2;
+
+  X.fillStyle='rgba(0,50,0,0.35)';X.beginPath();X.ellipse(5.5,z.h+1,5,1.8,0,0,Math.PI*2);X.fill();
+
   // Legs
   X.fillStyle='#1a5a1a';
-  X.fillRect(1,16+wk,6,10);X.fillRect(12,16-wk,6,10);
-  X.fillStyle='#0a3a0a';
-  X.fillRect(0,25+wk,8,3);X.fillRect(11,25-wk,8,3);
-  // Body — red tint when charging at player
-  X.fillStyle=z.charging?'#aa3a1a':'#2aaa2a';X.fillRect(1,8,18,10);
-  X.fillStyle='rgba(0,0,0,0.25)';X.fillRect(3,10,5,6);X.fillRect(13,9,6,5);
-  // Biohazard
-  X.fillStyle='rgba(0,255,70,0.45)';X.font='7px monospace';X.fillText('☣',6,18);
+  X.fillRect(1,9+wk,3,7);
+  X.fillRect(6,9-wk,3,7);
+  X.fillStyle='#0a2a0a';
+  X.fillRect(0,15+wk,5,2);
+  X.fillRect(5,15-wk,5,2);
+
+  // Body
+  X.fillStyle=z.charging?'#9a3010':'#1a8a1a';
+  X.fillRect(1,4,9,7);
+  X.fillStyle='rgba(0,0,0,0.2)';X.fillRect(2,5,3,4);
+
   // Arms outstretched
-  const ar=Math.sin(z.animF*.14)*4-4;
-  X.fillStyle='#228822';
-  X.fillRect(-6,8+ar,7,5);X.fillRect(19,8-ar,7,5);
-  X.fillStyle='#1a6a1a';X.fillRect(-8,7+ar,4,8);X.fillRect(23,7-ar,4,8);
+  const ar=Math.sin(z.animF*.18)*2-1;
+  X.fillStyle='#1a7a1a';
+  X.fillRect(-4,4+ar,5,3);
+  X.fillRect(9,4-ar,5,3);
+  X.fillStyle='#2aaa2a';
+  X.fillRect(-6,3+ar,3,5);
+  X.fillRect(12,3-ar,3,5);
+
   // Head
-  X.fillStyle='#2aaa2a';X.fillRect(2,0,16,10);
-  // Eye sockets
-  X.fillStyle='#0a3a0a';X.fillRect(4,1,5,5);X.fillRect(11,1,5,5);
+  X.fillStyle='#2aaa2a';
+  X.fillRect(2,0,8,6);
+
   // Glowing eyes
   X.fillStyle='#00ff44';
-  X.beginPath();X.arc(6.5,3.5,2.2,0,Math.PI*2);X.fill();
-  X.beginPath();X.arc(13.5,3.5,2.2,0,Math.PI*2);X.fill();
-  X.fillStyle='rgba(0,255,68,0.3)';
-  X.beginPath();X.arc(6.5,3.5,5,0,Math.PI*2);X.fill();
-  X.beginPath();X.arc(13.5,3.5,5,0,Math.PI*2);X.fill();
+  X.beginPath();X.arc(4,2.5,1.5,0,Math.PI*2);X.fill();
+  X.beginPath();X.arc(7.5,2.5,1.5,0,Math.PI*2);X.fill();
+  X.fillStyle='rgba(0,255,68,0.25)';
+  X.beginPath();X.arc(4,2.5,3.5,0,Math.PI*2);X.fill();
+  X.beginPath();X.arc(7.5,2.5,3.5,0,Math.PI*2);X.fill();
+
   // Teeth
-  X.fillStyle='#bbffbb';X.fillRect(4,8,2,2);X.fillRect(8,8,2,2);X.fillRect(12,8,2,2);
-  // Hair sprigs
-  X.fillStyle='#0a2a0a';X.fillRect(2,0,4,3);X.fillRect(10,0,4,3);X.fillRect(16,0,3,4);
+  X.fillStyle='#bbffbb';
+  X.fillRect(3,5,1.5,1.5);
+  X.fillRect(5.5,5,1.5,1.5);
+  X.fillRect(8,5,1.5,1.5);
+
+  // Hair
+  X.fillStyle='#0a2a0a';
+  X.fillRect(3,0,2,2);X.fillRect(7,0,2,2);
+
   X.restore();
 }
 
-// ── PLAYER ──
 function drawPlayer(){
   if(PL.dead&&PL.deathTimer>0){
-    X.globalAlpha=PL.deathTimer/55;
-    X.fillStyle='#ff2200';X.font='18px serif';X.textAlign='center';
-    X.fillText('✝',PL.x+PL.w/2,PL.y-PL.deathTimer*.5);
+    X.globalAlpha=PL.deathTimer/50;
+    X.fillStyle='#ff2200';X.font='14px serif';X.textAlign='center';
+    X.fillText('✝',PL.x+PL.w/2,PL.y-PL.deathTimer*.4);
     X.globalAlpha=1;X.textAlign='left';return;
   }
   if(PL.dead)return;
   if(PL.invincible>0&&Math.floor(PL.invincible/5)%2===0)return;
 
   X.save();
-  if(PL.dir<0){X.translate(PL.x+PL.w,PL.y);X.scale(-1,1);}
-  else X.translate(PL.x,PL.y);
-  const p=0,q=0;
+  if(PL.dir<0){X.translate(PL.x+PL.w,PL.y);X.scale(-1,1);}else X.translate(PL.x,PL.y);
 
   const isWalk=PL.onGround&&Math.abs(PL.vx)>0.2;
-  const wk=isWalk?Math.sin(PL.walkF*.42)*3.5:0;
-  const bob=isWalk?Math.abs(Math.sin(PL.walkF*.42))*1.5:0;
+  const wk=isWalk?Math.sin(PL.walkF*.42)*2.5:0;
+  const bob=isWalk?Math.abs(Math.sin(PL.walkF*.42))*1.2:0;
 
-  // Shadow
-  X.fillStyle='rgba(0,0,0,0.3)';X.beginPath();X.ellipse(p+9,q+PL.h+1,8,2.5,0,0,Math.PI*2);X.fill();
+  X.fillStyle='rgba(0,0,0,0.25)';X.beginPath();X.ellipse(7,PL.h+1,6,2,0,0,Math.PI*2);X.fill();
 
   if(PL.climbing){
-    // Climbing pose
-    X.fillStyle='#334455';X.fillRect(p+0,q+18,8,8);X.fillRect(p+10,q+18,8,8);
-    X.fillStyle='#44aaff';X.fillRect(p+1,q+8,16,12);
-    X.fillStyle='#2266cc';X.fillRect(p+1,q+18,16,2);
+    X.fillStyle='#334455';X.fillRect(0,14,5,7);X.fillRect(8,14,5,7);
+    X.fillStyle='#44aaff';X.fillRect(1,6,11,9);
     X.fillStyle='#ffccaa';
-    const cg=Math.sin(frame*.2)*3;
-    X.fillRect(p-3,q+8+cg,5,7);X.fillRect(p+16,q+8-cg,5,7);
+    const cg=Math.sin(frame*.2)*2;
+    X.fillRect(-2,6+cg,4,6);X.fillRect(11,6-cg,4,6);
   } else {
-    // Legs
     X.fillStyle='#334455';
-    X.fillRect(p+1,q+16+wk,6,10-bob);
-    X.fillRect(p+11,q+16-wk,6,10+bob);
-    // Boots
+    X.fillRect(1,13+wk,4,8-bob);
+    X.fillRect(8,13-wk,4,8+bob);
     X.fillStyle='#111';
-    X.fillRect(p,q+24+wk,8,3);X.fillRect(p+9,q+24-wk,8,3);
-    // Body
-    X.fillStyle='#44aaff';X.fillRect(p+1,q+8,16,10);
-    X.fillStyle='#2266cc';X.fillRect(p+1,q+16,16,2);
-    X.fillStyle='#885522';X.fillRect(p+1,q+14,16,2);X.fillStyle='#ffcc00';X.fillRect(p+7,q+14,4,2);
-    // Arms
-    X.fillStyle='#44aaff';X.fillRect(p-3,q+8,5,7);X.fillRect(p+16,q+8,5,7);
-    X.fillStyle='#ffccaa';X.fillRect(p-3,q+14,5,4);X.fillRect(p+16,q+14,5,4);
-    // Syringe
-    X.fillStyle='#88aaff';X.fillRect(p+18,q+9,3,10);
-    X.fillStyle='#4488ff';X.fillRect(p+17,q+8,5,3);
-    X.fillStyle='rgba(0,200,255,0.7)';X.fillRect(p+20,q+10,1,6);
-    X.fillStyle='#aaa';X.fillRect(p+20,q+18,1,3);
+    X.fillRect(0,20+wk,6,2);X.fillRect(7,20-wk,6,2);
+    X.fillStyle='#44aaff';X.fillRect(1,6,11,8);
+    X.fillStyle='#2266cc';X.fillRect(1,13,11,1.5);
+    X.fillStyle='#44aaff';X.fillRect(-2,7,4,5);X.fillRect(11,7,4,5);
+    X.fillStyle='#ffccaa';X.fillRect(-2,11,4,3);X.fillRect(11,11,4,3);
+    X.fillStyle='#88aaff';X.fillRect(13,7,2,7);
+    X.fillStyle='#aaa';X.fillRect(13,13,2,2);
   }
 
-  // Head
-  X.fillStyle='#ffccaa';X.fillRect(p+2,q,14,11);
-  // Hat (hard hat)
-  X.fillStyle='#ff8800';X.fillRect(p+1,q,16,4);X.fillRect(p-1,q+2,20,3);
-  X.fillStyle='#cc5500';X.fillRect(p-1,q+4,20,1);
-  // Hair
-  X.fillStyle='#442200';X.fillRect(p+2,q,14,4);X.fillRect(p+2,q,3,7);
-  // Eyes
-  X.fillStyle='#fff';X.fillRect(p+4,q+4,4,3);X.fillRect(p+10,q+4,4,3);
+  X.fillStyle='#ffccaa';X.fillRect(2,0,10,8);
+  X.fillStyle='#ff8800';X.fillRect(1,0,12,3);X.fillRect(-1,2,15,2);
+  X.fillStyle='#442200';X.fillRect(2,0,10,3);
+  X.fillStyle='#fff';X.fillRect(3,3,3,2.5);X.fillRect(8,3,3,2.5);
   X.fillStyle='#1a1a88';
-  X.beginPath();X.arc(p+6,q+5.5,1.5,0,Math.PI*2);X.fill();
-  X.beginPath();X.arc(p+12,q+5.5,1.5,0,Math.PI*2);X.fill();
-  X.fillStyle='#fff';X.fillRect(p+7,q+4,1,1);X.fillRect(p+13,q+4,1,1);
-  // Mouth
-  X.fillStyle='#cc5533';X.fillRect(p+4,q+8,9,2);
-  X.fillStyle='#fff';X.fillRect(p+4,q+8,2,1);X.fillRect(p+7,q+8,2,1);X.fillRect(p+10,q+8,2,1);
-  // Beak
+  X.beginPath();X.arc(4.5,4,1.2,0,Math.PI*2);X.fill();
+  X.beginPath();X.arc(9.5,4,1.2,0,Math.PI*2);X.fill();
+  X.fillStyle='#cc5533';X.fillRect(3,6.5,7,1.5);
   X.fillStyle='#ffcc00';
-  X.beginPath();X.moveTo(p+15,q+4);X.lineTo(p+20,q+6);X.lineTo(p+15,q+8);X.closePath();X.fill();
+  X.beginPath();X.moveTo(12,2.5);X.lineTo(15,4);X.lineTo(12,5.5);X.closePath();X.fill();
 
   X.restore();
 }
 
-// ── PARTICLES / POPS ──
 function drawFX(){
   particles=particles.filter(p=>{
-    p.x+=p.vx;p.y+=p.vy;p.vy+=0.15;p.life--;
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.12;p.life--;
     X.globalAlpha=p.life/p.maxLife;X.fillStyle=p.col;
-    X.fillRect(p.x,p.y,3,3);X.globalAlpha=1;
+    X.fillRect(p.x,p.y,2,2);X.globalAlpha=1;
     return p.life>0;
   });
   pops=pops.filter(p=>{
-    p.y-=.5;p.life--;
+    p.y-=.4;p.life--;
     X.globalAlpha=p.life/p.maxLife;
-    X.fillStyle=p.col;X.font='bold 10px monospace';X.textAlign='center';
+    X.fillStyle=p.col;X.font='bold 9px monospace';X.textAlign='center';
     X.fillText(p.txt,p.x,p.y);X.globalAlpha=1;X.textAlign='left';
     return p.life>0;
   });
 }
 
-// ── HUD ON CANVAS  (DK-style score display inside game) ──
 function drawCanvasHUD(){
-  // Small info bar at top of canvas
-  X.fillStyle='rgba(0,0,0,0.7)';X.fillRect(0,0,CW,16);
-  X.fillStyle='#ffcc00';X.font='bold 10px monospace';
-  X.fillText('SCORE '+score,4,12);
-  X.fillStyle='#ff6644';
-  X.fillText('HI '+Math.max(score,hiScore),CW/2-30,12);
-  // Lives as hearts
+  X.fillStyle='rgba(0,0,0,0.65)';X.fillRect(0,0,CW,14);
+  X.fillStyle='#ffcc00';X.font='bold 9px monospace';
+  X.fillText('SCORE '+score,4,11);
+  X.fillStyle='#ff6644';X.fillText('HI '+Math.max(score,hiScore),CW/2-25,11);
   X.fillStyle='#ff4444';
-  for(let i=0;i<Math.max(0,lives);i++) X.fillText('♥',CW-14-i*12,12);
-  // Stage clear countdown hint arrow to princess
+  for(let i=0;i<Math.max(0,lives);i++)X.fillText('♥',CW-12-i*10,11);
   if(state==='playing'){
-    X.fillStyle='rgba(255,180,220,0.7)';X.font='9px monospace';
-    X.textAlign='right';X.fillText('👸',CW-4,CH-4);X.textAlign='left';
+    X.fillStyle='rgba(255,180,220,0.65)';X.font='8px monospace';
+    X.textAlign='right';X.fillText('👸',CW-3,CH-3);X.textAlign='left';
   }
 }
 
-// ─────────────────────────────────────────
-//  MAIN LOOP
-// ─────────────────────────────────────────
 let lastT=0;
 function loop(ts){
   requestAnimationFrame(loop);
-  if(!lastT)lastT=ts;
-  lastT=ts;
-  frame++;
-
+  if(!lastT)lastT=ts;lastT=ts;frame++;
   if(state!=='playing')return;
-
   updatePlayer();
   updateZombies();
-
   DOC.throwTimer--;
   if(DOC.throwTimer<=0){spawnZombie();DOC.throwTimer=DOC.throwInterval;}
-
-  // Render
-  drawBG();
-  drawGirders();
-  drawLadders();
-  drawFires();
-  drawPills();
-  drawPrincess();
-  zombies.forEach(drawZombie);
-  drawPlayer();
-  drawDoctor();
-  drawFX();
-  drawCanvasHUD();
+  drawBG();drawGirders();drawLadders();drawFires();drawPills();
+  drawPrincess();zombies.forEach(drawZombie);drawPlayer();drawDoctor();drawFX();drawCanvasHUD();
 }
 
-// ─────────────────────────────────────────
-//  HELPERS
-// ─────────────────────────────────────────
 function overlap(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
-function spawnFX(x,y,col,n=6,v=-1.5){
-  for(let i=0;i<n;i++) particles.push({x,y,vx:(Math.random()-.5)*3.5,vy:v+Math.random()*2,col,life:22,maxLife:22});
+function spawnFX(x,y,col,n=5,v=-1.2){
+  for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-.5)*3,vy:v+Math.random()*1.5,col,life:20,maxLife:20});
 }
-function addPop(x,y,txt,col){pops.push({x,y,txt,col,life:48,maxLife:48});}
+function addPop(x,y,txt,col){pops.push({x,y,txt,col,life:44,maxLife:44});}
 
-// ─────────────────────────────────────────
-//  HUD
-// ─────────────────────────────────────────
 function updateHUD(){
   document.getElementById('sc').textContent='SCORE: '+score;
   document.getElementById('hi').textContent='HI: '+Math.max(score,hiScore);
@@ -1139,20 +685,13 @@ function hideOverlay(){
   document.getElementById('msg').classList.add('hidden');
 }
 
-// ─────────────────────────────────────────
-//  START
-// ─────────────────────────────────────────
 function startGame(){
   score=0;lives=3;stage=1;
   initStage(1);updateHUD();
   state='playing';hideOverlay();
-  // Draw one frame immediately
   drawBG();drawGirders();drawLadders();drawPrincess();drawDoctor();drawCanvasHUD();
 }
 
-// ─────────────────────────────────────────
-//  INPUT
-// ─────────────────────────────────────────
 document.addEventListener('keydown',e=>{
   keys[e.code]=true;keys[e.key]=true;
   if(e.code==='Space'||e.key===' ')doJump();
@@ -1161,19 +700,16 @@ document.addEventListener('keyup',e=>{keys[e.code]=false;keys[e.key]=false;});
 
 function bindBtn(id,dn,up){
   const el=document.getElementById(id);if(!el)return;
-  const evDn=['touchstart','mousedown'];
-  const evUp=['touchend','touchcancel','mouseup','mouseleave'];
-  evDn.forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();el.classList.add('pr');dn();},{passive:false}));
-  evUp.forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();el.classList.remove('pr');if(up)up();},{passive:false}));
+  ['touchstart','mousedown'].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();el.classList.add('pr');dn();},{passive:false}));
+  ['touchend','touchcancel','mouseup','mouseleave'].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();el.classList.remove('pr');if(up)up();},{passive:false}));
 }
 
-bindBtn('bl',    ()=>tLeft=true,  ()=>tLeft=false);
-bindBtn('br',    ()=>tRight=true, ()=>tRight=false);
-bindBtn('bup',   ()=>tUp=true,    ()=>tUp=false);
-bindBtn('bdown', ()=>tDown=true,  ()=>tDown=false);
-bindBtn('bjump', ()=>doJump(),    null);
+bindBtn('bl',   ()=>tLeft=true,  ()=>tLeft=false);
+bindBtn('br',   ()=>tRight=true, ()=>tRight=false);
+bindBtn('bup',  ()=>tUp=true,    ()=>tUp=false);
+bindBtn('bdown',()=>tDown=true,  ()=>tDown=false);
+bindBtn('bjump',()=>doJump(),    null);
 
-// Kick off render loop
 X.fillStyle='#000';X.fillRect(0,0,CW,CH);
 requestAnimationFrame(loop);
 </script>
