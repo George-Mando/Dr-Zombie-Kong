@@ -228,11 +228,11 @@ const PAL={
 //    Platform 4 (top)    y=64   ← princess + doctor here
 // ─────────────────────────────────────────
 const GIRDERS=[
-  {y:256, x:4,  w:352, tilt:0},   // 0 bottom — flat
+  {y:256, x:4,  w:352, tilt:3},   // 0 bottom — slight right lean (exits right, despawns)
   {y:208, x:4,  w:344, tilt:-3},  // 1 tilts left
   {y:160, x:4,  w:352, tilt:3},   // 2 tilts right
   {y:112, x:4,  w:344, tilt:-3},  // 3 tilts left
-  {y:64,  x:4,  w:352, tilt:0},   // 4 top — flat
+  {y:64,  x:4,  w:352, tilt:-3},  // 4 top — tilts left (zombies walk left from doctor on right)
 ];
 const GH=12; // girder height
 
@@ -258,8 +258,12 @@ let state='menu', score=0, hiScore=0, lives=3, stage=1, frame=0;
 //  The gap between platforms is ~48px, zombie height is 28px
 //  So max jump = 32px upward — enough to hop zombie but NOT reach next floor
 // ─────────────────────────────────────────
-const JUMP_VY=-5.2;   // jump velocity — tuned to clear zombie (28px) but not reach platform (48px gap)
-const GRAVITY=0.5;
+// Jump tuned precisely:
+// vy=-5.8, gravity=0.38 → peak rise = 5.8²/(2×0.38) = 44px
+// Zombie is 28px tall → player clears it with 16px to spare ✓
+// Girder gap = 48px → player peak (44px) doesn't reach next floor ✓
+const JUMP_VY=-5.8;
+const GRAVITY=0.38;
 
 const PL={
   x:20, y:0,
@@ -357,8 +361,8 @@ function spawnZombie(){
   const top=GIRDERS[4];
   // Tilt=0 on top girder, so randomise initial direction based on doctor position
   zombies.push({
-    x: DOC.x-28,
-    y: top.y-28,
+    x: DOC.x-26,
+    y: top.y-28,   // top of zombie = girder surface - zombie height
     w:20,h:28,
     spd,
     dir:-1,           // walk LEFT initially (away from doctor who is on right)
@@ -378,75 +382,96 @@ function updateZombies(){
     if(z.dead){z.deathTimer--;return z.deathTimer>0;}
     z.animF++;
 
-    if(z.falling){
-      z.vy+=0.55;
-      z.y+=z.vy;
-      z.x+=z.dir*z.spd*0.4;
+    // ── PLAYER PROXIMITY SPEED BOOST ──
+    // When player is on the SAME girder and within 120px, zombie charges faster
+    // When player is on a different girder, zombie maintains normal pace
+    const playerOnSameGirder = !PL.dead && !PL.climbing &&
+      PL.y+PL.h >= GIRDERS[z.gIdx].y-4 && PL.y+PL.h <= GIRDERS[z.gIdx].y+16;
+    const distToPlayer = Math.abs((PL.x+PL.w/2)-(z.x+z.w/2));
+    const sameGirderClose = playerOnSameGirder && distToPlayer < 140;
+    const effectiveSpd = sameGirderClose
+      ? z.spd * (1.8 + Math.min(1.0, (140-distToPlayer)/140))  // charge! up to 2.8x speed
+      : z.spd;
 
-      // Check landing on next girder down
-      const ni=z.gIdx-1;
-      if(ni<0){
-        if(z.y>CH+20)return false;
-        return true;
+    // Flash red when charging
+    z.charging = sameGirderClose;
+
+    if(z.falling){
+      // Gravity — use strong downward pull so zombie snaps to next girder quickly
+      z.vy = Math.min(z.vy + 0.8, 8);
+      z.y += z.vy;
+      // Horizontal drift while falling — keep moving in same direction slowly
+      z.x += z.dir * z.spd * 0.3;
+
+      // ── LAND ON ANY GIRDER BELOW (check all, not just gIdx-1) ──
+      // This prevents skipping platforms when falling fast
+      let landed=false;
+      for(let ni=z.gIdx-1;ni>=0;ni--){
+        const ng=GIRDERS[ni];
+        // Zombie must be horizontally on the girder to land
+        const onGirderX = z.x+z.w > ng.x+4 && z.x < ng.x+ng.w-4;
+        if(onGirderX && z.y+z.h >= ng.y && z.y+z.h <= ng.y+z.vy+2){
+          // Land here
+          z.y = ng.y - z.h;
+          z.gIdx = ni;
+          z.falling = false;
+          z.vy = 0;
+          // Walk downhill on new girder
+          if(ng.tilt>0)       z.dir=1;
+          else if(ng.tilt<0)  z.dir=-1;
+          // tilt=0 (flat): keep existing direction
+          landed=true;
+          break;
+        }
       }
-      const ng=GIRDERS[ni];
-      if(z.y+z.h>=ng.y){
-        z.y=ng.y-z.h;
-        z.gIdx=ni;
-        z.falling=false;
-        z.vy=0;
-        // Walk in the tilt direction of new girder
-        // tilt>0 = right side lower → walk right
-        // tilt<0 = left side lower  → walk left
-        // tilt=0 = random
-        if(ng.tilt>0) z.dir=1;
-        else if(ng.tilt<0) z.dir=-1;
-        else z.dir=z.dir; // keep same
-      }
+      if(!landed && z.y > CH+20) return false;
       return true;
     }
 
-    // Walking on girder
+    // ── WALKING ON GIRDER ──
     const g=GIRDERS[z.gIdx];
-    z.y=g.y-z.h; // lock to surface
-    z.x+=z.dir*z.spd;
+    z.y=g.y-z.h;
+    z.x+=z.dir*effectiveSpd;
 
-    const lEdge=g.x;
-    const rEdge=g.x+g.w-z.w;
+    const lEdge=g.x+2;
+    const rEdge=g.x+g.w-z.w-2;
 
-    // Check ends — fall off the LOW end, bounce off the HIGH end
-    if(z.dir<0&&z.x<=lEdge){
+    if(z.dir<0 && z.x<=lEdge){
       z.x=lEdge;
-      // Is this the low end? (tilt<0 = left is low)
-      if(g.tilt<0||g.tilt===0){
-        z.falling=true;z.vy=0;
+      if(g.tilt<=0){
+        // Left is the low end (or flat) → roll off
+        z.falling=true; z.vy=1.5;
       } else {
-        z.dir=1; // high end → bounce
+        z.dir=1; // left is high end → bounce
       }
-    } else if(z.dir>0&&z.x>=rEdge){
+    } else if(z.dir>0 && z.x>=rEdge){
       z.x=rEdge;
-      if(g.tilt>0||g.tilt===0){
-        z.falling=true;z.vy=0;
+      if(g.tilt>=0){
+        // Right is low end (or flat) → roll off
+        z.falling=true; z.vy=1.5;
       } else {
         z.dir=-1;
       }
     }
 
-    // Off girder 0 bottom → despawn
-    if(z.gIdx===0&&z.falling&&z.y>CH)return false;
+    // Girder 0: rolled off either end → despawn
+    if(z.gIdx===0 && z.falling) {
+      // Give a moment to fall off screen
+    }
+    if(z.y > CH+40) return false;
 
-    // Score check — did player jump over this zombie?
-    if(!z.scored&&!PL.dead&&PL.vy<0){
+    // ── SCORE: player jumped over this zombie ──
+    if(!z.scored&&!PL.dead&&PL.vy<-0.1){
       const pcx=PL.x+PL.w/2, zcx=z.x+z.w/2;
-      if(Math.abs(pcx-zcx)<24&&PL.y+PL.h<z.y+4&&!PL.climbing){
+      if(Math.abs(pcx-zcx)<26 && PL.y+PL.h <= z.y+4 && !PL.climbing){
         z.scored=true;
         score+=150;
-        addPop(z.x+10,z.y-8,'+150','#ffcc00');
+        addPop(zcx, z.y-10, '+150', '#ffcc00');
         updateHUD();
       }
     }
 
-    // Hurt player on contact
+    // ── HURT PLAYER on contact ──
     if(!PL.dead&&PL.invincible<=0){
       if(overlap(PL,{x:z.x+3,y:z.y+4,w:z.w-6,h:z.h-8})){
         hurtPlayer();
@@ -891,10 +916,21 @@ function drawZombie(z){
     X.globalAlpha=1;X.textAlign='left';return;
   }
   if(z.dead)return;
+
+  // Charging glow (red aura when chasing player)
+  if(z.charging){
+    const glow=0.3+Math.sin(frame*.3)*0.15;
+    X.fillStyle='rgba(255,50,0,'+glow+')';
+    X.beginPath();X.ellipse(z.x+10,z.y+z.h/2,z.w*0.9,z.h*0.7,0,0,Math.PI*2);X.fill();
+    // Warning exclamation
+    X.fillStyle='#ff4400';X.font='bold 10px monospace';X.textAlign='center';
+    X.fillText('!!',z.x+10,z.y-4);X.textAlign='left';
+  }
+
   X.save();
   if(z.dir>0){X.translate(z.x+z.w,z.y);X.scale(-1,1);}
   else X.translate(z.x,z.y);
-  const wk=Math.sin(z.animF*.22)*3;
+  const wk=Math.sin(z.animF*(z.charging?0.38:0.22))*3;
   // Shadow
   X.fillStyle='rgba(0,50,0,0.4)';X.beginPath();X.ellipse(10,z.h+1,8,2.5,0,0,Math.PI*2);X.fill();
   // Legs
@@ -902,8 +938,8 @@ function drawZombie(z){
   X.fillRect(1,16+wk,6,10);X.fillRect(12,16-wk,6,10);
   X.fillStyle='#0a3a0a';
   X.fillRect(0,25+wk,8,3);X.fillRect(11,25-wk,8,3);
-  // Body
-  X.fillStyle='#2aaa2a';X.fillRect(1,8,18,10);
+  // Body — red tint when charging at player
+  X.fillStyle=z.charging?'#aa3a1a':'#2aaa2a';X.fillRect(1,8,18,10);
   X.fillStyle='rgba(0,0,0,0.25)';X.fillRect(3,10,5,6);X.fillRect(13,9,6,5);
   // Biohazard
   X.fillStyle='rgba(0,255,70,0.45)';X.font='7px monospace';X.fillText('☣',6,18);
